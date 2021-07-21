@@ -1,0 +1,8 @@
+{
+    "hostList": [
+        "localhost:8000",
+        "localhost:8001"
+    ],
+    "apiKeyHash": "5?BP2hT8A$8h0f|ubAay{LbZa779h%p",
+    "passwordHash": "123456"
+}
