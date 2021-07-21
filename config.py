@@ -7,6 +7,5 @@ class Config:
 
     host_list = [
         "localhost:8080",
-        "80.87.201.125:8080",
         "localhost:8081"
     ]
