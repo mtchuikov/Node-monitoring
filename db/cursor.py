@@ -1,4 +1,8 @@
-from sqlalchemy import update, delete, insert, select, func
+from sqlalchemy import update
+from sqlalchemy import delete
+from sqlalchemy import insert
+from sqlalchemy import select
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 class Cursor:
@@ -6,12 +10,6 @@ class Cursor:
     def __init__(self, model: object, session: Session):
         self._model = model
         self._session = session
-
-    # def __enter__(self):
-    #     return self._session.begin()
-    #
-    # def __exit__(self, exc_type, exc_val, exc_tb):
-    #     self.commit()
 
     def commit(self):
         self._session.commit()

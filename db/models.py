@@ -1,6 +1,9 @@
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column
+from sqlalchemy import String
+from sqlalchemy import Integer
+from sqlalchemy.ext.declarative import declarative_base
 
-from .controller import base
+base = declarative_base()
 
 class SystemInfo(base):
    __tablename__ = "SystemInfo"

@@ -1,11 +1,11 @@
 import json
 
 def read_config():
-    with open("config.json", "r") as f:
+    with open("../config.json", "r") as f:
         return json.load(f)
 
 def write_config(data):
-    with open("config.json", "w+") as f:
+    with open("../config.json", "w+") as f:
         json.dump(data, f, indent=4)
 
 def dict_unifier(*dicts_list :dict) -> dict:

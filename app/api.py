@@ -1,6 +1,6 @@
 import http.client
 import re
-import utils
+from app import utils
 
 from aiohttp import web
 from functools import wraps
