@@ -1,12 +1,10 @@
 from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy import Integer
-from sqlalchemy.ext.declarative import declarative_base
+from .base import Base
 
-base = declarative_base()
-
-class SystemInfo(base):
-   __tablename__ = "SystemInfo"
+class SystemRequirements(Base):
+   __tablename__ = "system-requirements"
 
    snapshotTime = Column(String, primary_key=True)
 
@@ -17,8 +15,8 @@ class SystemInfo(base):
 
    totalStorage = Column(String)
 
-class SystemStatistic(base):
-   __tablename__ = "SystemStatistic"
+class SystemLoadStatistic(Base):
+   __tablename__ = "system-load-statistic"
 
    snapshotTime = Column(String, primary_key=True)
 

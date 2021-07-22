@@ -1,10 +1,18 @@
 import json
 
-def read_config():
+def read_config() -> dict:
+    """
+        Функция чтения файла-конфига.
+
+    :return: содержание конфига в виде словаря.
+    """
     with open("../config.json", "r") as f:
         return json.load(f)
 
 def write_config(data):
+    """
+        Функция записи в файд-конфиг.
+    """
     with open("../config.json", "w+") as f:
         json.dump(data, f, indent=4)
 

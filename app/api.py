@@ -1,17 +1,19 @@
-import http.client
+import functools
 import re
+from aiohttp import web
 from app import utils
 
-from aiohttp import web
-from functools import wraps
-
-def ip() -> str:
-    conn = http.client.HTTPConnection("ifconfig.me")
-    conn.request("GET", "/ip")
-    return conn.getresponse().read().decode("utf-8")
-
 def _catchErr(func):
-    @wraps(func)
+    """
+        Функция для отлова типовых ошибок, возникновение которых связанно
+    с передачей неверных заголовков при POST-запросе к API-сервису.
+        Данная функция должна использоваться в качестве декоратора для
+    любой функции, реализующей API-метод.
+
+    :param func: декорируемая функция
+    :return: HTTP status code или результат декорируемой функции.
+    """
+    @functools.wraps(func)
     async def wrap(req):
         try:
             func_result = await func(req)
@@ -21,7 +23,21 @@ def _catchErr(func):
     return wrap
 
 def _passwordAuth(func):
-    @wraps(func)
+    """
+        Проверка авторизации в API-сервисе по паролю. Данный вид авторизации
+    используется администратором сервера для загрузки настроект приложения:
+    назначение API-ключа для доступа к мониторингу, сообщение списка других
+    серверов.
+        Переданный клиентом в заголовке Authorization POST-запроса хэш,
+    сравнивается с хэшем ключа, который хранится в файле config.json Если
+    хэши совпадают, происходит вызов запрошенного API-метода.
+        Данная функция должна использоваться в качестве декоратора для любой
+    функции, реализующей администраторский API-метод.
+
+    :param func: декорируемая функция
+    :return: HTTP status code или результат декорируемой функции.
+    """
+    @functools.wraps(func)
     async def wrap(req: web.Request):
         if req.headers["Content-Type"] != "application/json":
             return web.HTTPUnsupportedMediaType()
@@ -31,8 +47,21 @@ def _passwordAuth(func):
         return await func(req)
     return wrap
 
-def _apiAuth(func):
-    @wraps(func)
+def _apiKeyAuth(func):
+    """
+        Проверка авторизации в API-сервисе по API-ключу. Данный вид авторизации
+    используется пользователями для получения данных от мониторинга о состоянии
+    системы.
+        Переданный клиентом в заголовке Authorization POST-запроса, сравнивается
+    с хэшем ключа, который хранится в файле config.json  Если хэши совпадают,
+    происходит вызов запрошенного API-метода.
+        Данная функция должна использоваться в качестве декоратора для любой
+    функции, реализующей пользовательский API-метод.
+
+    :param func: декорируемая функция
+    :return: HTTP status code или результат декорируемой функции.
+    """
+    @functools.wraps(func)
     async def wrap(req: web.Request):
         if req.headers["Content-Type"] != "application/json":
             return web.HTTPUnsupportedMediaType()
@@ -47,8 +76,6 @@ def _apiAuth(func):
 async def settings(req: web.Request):
     load_settings = await req.json()
     pattern = re.compile(ip())
-    if "apiKeyHash" not in load_settings.keys():
-        raise KeyError
     for index, elem in enumerate(load_settings["hostList"]):
         if pattern.search(elem):
             load_settings["hostList"].pop(index)
@@ -57,17 +84,17 @@ async def settings(req: web.Request):
     return web.HTTPOk()
 
 @_catchErr
-@_apiAuth
+@_apiKeyAuth
 async def health(req: web.Request):
     return web.HTTPOk()
 
 @_catchErr
-@_apiAuth
+@_apiKeyAuth
 async def get_server_status(req: web.Request):
     pass
 
 @_catchErr
-@_apiAuth
+@_apiKeyAuth
 async def get_node_status(req: web.Request):
     pass
 
